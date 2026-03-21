@@ -3,8 +3,7 @@ import {generateToken} from "../lib/utils.js";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import { sendWelcomeEmail } from "../emails/emailHandlers.js";
-import dotenv from "dotenv";
-dotenv.config();
+import { ENV } from "../lib/env.js";
 
 export const signup = async(req, res) => {
     const {fullName,email,password} =req.body;
@@ -36,7 +35,7 @@ export const signup = async(req, res) => {
             await newUser.save();
             //send email to user
             try{
-                    await sendWelcomeEmail(savedUser.email, savedUser.fullName, process.env.CLIENT_URL);
+                    await sendWelcomeEmail(savedUser.email, savedUser.fullName, ENV.CLIENT_URL);
             }catch(error){
                 console.log("Error sending welcome email:", error);
             }
@@ -82,4 +81,22 @@ export const login= async(req,res)=>{
 export const logout =async(req,res)=>{
  res.cookie("jwt","",{maxAge:0});
  return res.status(200).json({"message":"Logged out successfully"})
+}
+export const updateProfile=async(req,res)=>{
+    try{
+        if(!req.file) return res.status(400).json({message:"Profile picture is required"});
+
+        const userId = req.user._id;//as we are passing user data in req from protectedRoute fun in middleware
+        const profilePicPath = `uploads/${req.file.filename}`;
+        const updatedUser = await User.findByIdAndUpdate(
+                            userId,
+                            { profilePicture: profilePicPath },
+                            { new: true }
+                            );
+        res.status(200).json(updatedUser);
+    }
+    catch(error){
+        console.log("error occured in updateProfile");
+        return res.status(500).json({message:"Internal Server Error"});
+    }
 }
