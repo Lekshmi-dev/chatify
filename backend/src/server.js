@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cookieParser());
 app.use('/uploads', express.static('uploads'));
+app.use('/chatImages', express.static('chatImages'));
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 if(process.env.NODE_ENV === "production"){

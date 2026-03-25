@@ -7,6 +7,7 @@ import { arcjetProtection } from '../middleware/arcject.middleware.js';
 const router = express.Router();
 router.use(arcjetProtection);
 router.post('/signup', signup);
+router.post('/login', login);
 router.post('/logout',logout); 
 //check authenticated or not->use middleware function 
 router.put('/update-profile',protectedRoute,upload.single("profilePicture"),updateProfile); 

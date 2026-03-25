@@ -84,10 +84,11 @@ export const logout =async(req,res)=>{
 }
 export const updateProfile=async(req,res)=>{
     try{
-        if(!req.file) return res.status(400).json({message:"Profile picture is required"});
+        const profilepicture = req.body;
+        if(!profilepicture) return res(400).json({message:"Profile picture is required"});
 
         const userId = req.user._id;//as we are passing user data in req from protectedRoute fun in middleware
-        const profilePicPath = `uploads/${req.file.filename}`;
+        const profilePicPath = `/uploads/${req.file.filename}`;
         const updatedUser = await User.findByIdAndUpdate(
                             userId,
                             { profilePicture: profilePicPath },
